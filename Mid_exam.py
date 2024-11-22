@@ -1,4 +1,4 @@
-# Streamlit: Phase 1 of Ultimate Educational App
+# Streamlit: Combined Code for Phase 1 and Phase 2
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 # Page Configuration
 st.set_page_config(
-    page_title="🚗 Educational Automobile Dashboard",
+    page_title="🚗 Automobile Educational Dashboard",
     page_icon="📊",
     layout="wide",
 )
@@ -18,43 +18,46 @@ def load_data():
     url = 'https://raw.githubusercontent.com/klamsal/Fall2024Exam/refs/heads/main/CleanedAutomobile.csv'
     return pd.read_csv(url)
 
-df = load_data()
+# File Upload Option
+def load_user_data(uploaded_file):
+    if uploaded_file is not None:
+        return pd.read_csv(uploaded_file)
+    else:
+        return load_data()
 
-# Header
-st.title("🚗 Automobile Data Analysis for Education")
-st.markdown("#### Explore car features and prices with interactive visualizations and statistical insights!")
+# Sidebar for Dataset Selection
+st.sidebar.title("🔍 Explore Options")
+uploaded_file = st.sidebar.file_uploader("Upload your dataset (CSV):", type="csv")
+df = load_user_data(uploaded_file)
 
-# Sidebar for Navigation
-st.sidebar.title("🔍 Explore Sections")
 menu = st.sidebar.radio(
-    "Choose a Section",
+    "Navigate to:",
     [
         "🏠 Overview",
         "📊 Statistical Insights",
-        "📈 Scatter Plots & Regression",
+        "📈 Scatter & Regression",
+        "📊 Filtered Data",
         "📋 Correlation Matrix",
     ],
 )
 
 # Section 1: Overview
 if menu == "🏠 Overview":
-    st.header("🏠 Dataset Overview")
-    st.write("### Dataset Preview")
-    st.dataframe(df.head(), use_container_width=True)
-
-    st.write("### Dataset Description")
+    st.title("🚗 Automobile Data Analysis for Education")
     st.markdown(
         """
-        This dataset contains attributes of cars, such as:
-        - **Engine Size**: Power of the vehicle.
-        - **Body Style**: Design and category of the car.
-        - **Price**: Cost of the vehicle.
-        
-        ### Why Learn from This Data?
-        - Explore relationships between car specifications and price.
-        - Gain practical experience with statistical analysis and visualization.
+        ### Welcome to the Automobile Data Dashboard!
+        - Analyze predefined or uploaded datasets.
+        - Interact with dynamic filters and custom charts.
+        - Gain meaningful insights with educational context.
         """
     )
+
+    st.header("📂 Dataset Preview")
+    st.dataframe(df.head(), use_container_width=True)
+
+    st.write("### Dataset Summary")
+    st.write(df.describe(include='all').T)
 
 # Section 2: Statistical Insights
 elif menu == "📊 Statistical Insights":
@@ -79,31 +82,67 @@ elif menu == "📊 Statistical Insights":
     sns.histplot(df[selected_feature].dropna(), kde=True, ax=ax, color="#2ecc71")
     st.pyplot(fig)
 
-# Section 3: Scatter Plots & Regression
-elif menu == "📈 Scatter Plots & Regression":
-    st.header("📈 Scatter Plots & Regression")
+# Section 3: Scatter & Regression
+elif menu == "📈 Scatter & Regression":
+    st.header("📈 Scatter & Regression Analysis")
 
-    st.markdown("### Select Features for Regression Analysis")
+    st.markdown("### Select Features for Analysis")
     numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
     x_axis = st.selectbox("Choose the X-axis (numerical):", numerical_columns)
     y_axis = st.selectbox("Choose the Y-axis (numerical):", numerical_columns)
 
-    # Drop NaN values for selected columns
-    scatter_data = df[[x_axis, y_axis]].dropna()
+    # Filter Data
+    st.markdown("### Apply Filters")
+    min_val, max_val = st.slider(
+        f"Filter data by {x_axis}:",
+        float(df[x_axis].min()), float(df[x_axis].max()),
+        (float(df[x_axis].min()), float(df[x_axis].max())),
+    )
+    filtered_data = df[(df[x_axis] >= min_val) & (df[x_axis] <= max_val)]
 
     # Scatter Plot
     st.write(f"#### Scatter Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.scatterplot(x=x_axis, y=y_axis, data=scatter_data, ax=ax, color="#3498db")
+    sns.scatterplot(x=x_axis, y=y_axis, data=filtered_data, ax=ax, color="#3498db")
     st.pyplot(fig)
 
     # Regression Plot
     st.write(f"#### Regression Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.regplot(x=x_axis, y=y_axis, data=scatter_data, ax=ax, color="#e74c3c")
+    sns.regplot(x=x_axis, y=y_axis, data=filtered_data, ax=ax, color="#e74c3c")
     st.pyplot(fig)
 
-# Section 4: Correlation Matrix
+# Section 4: Filtered Data
+elif menu == "📊 Filtered Data":
+    st.title("📊 Filtered Insights")
+
+    st.markdown("### Apply Filters to Narrow Down Data")
+    numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
+
+    # Slider for Price Range
+    if 'price' in df.columns:
+        min_price, max_price = st.slider(
+            "Select Price Range:",
+            int(df['price'].min()), int(df['price'].max()),
+            (int(df['price'].min()), int(df['price'].max())),
+        )
+        filtered_df = df[(df['price'] >= min_price) & (df['price'] <= max_price)]
+        st.write(f"#### Cars in the price range: ${min_price:,} - ${max_price:,}")
+        st.dataframe(filtered_df)
+
+    # Filter for Numerical Columns
+    selected_column = st.selectbox("Select a numerical feature to filter:", numerical_columns)
+    min_val, max_val = st.slider(
+        f"Select range for {selected_column}:",
+        float(df[selected_column].min()), float(df[selected_column].max()),
+        (float(df[selected_column].min()), float(df[selected_column].max())),
+    )
+    filtered_df = df[(df[selected_column] >= min_val) & (df[selected_column] <= max_val)]
+
+    st.write(f"### Filtered Data by {selected_column} Range:")
+    st.dataframe(filtered_df)
+
+# Section 5: Correlation Matrix
 elif menu == "📋 Correlation Matrix":
     st.header("📋 Correlation Matrix")
 
@@ -120,11 +159,9 @@ elif menu == "📋 Correlation Matrix":
 
     st.markdown(
         """
-        ### What is a Correlation Matrix?
-        - **Positive Correlation**: As one variable increases, so does the other.
-        - **Negative Correlation**: As one variable increases, the other decreases.
-        - **No Correlation**: No linear relationship exists.
-        
-        Use this matrix to identify relationships between variables, such as how engine size correlates with price.
+        ### Insights:
+        - **Positive Correlation**: Two variables increase together.
+        - **Negative Correlation**: One variable increases, the other decreases.
+        - **No Correlation**: No clear relationship.
         """
     )
