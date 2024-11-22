@@ -1,4 +1,4 @@
-# Streamlit: Combined Code for Phases 1, 2, 3, and 4 with Box Plots
+# Streamlit: Final Combined Code for Phases 1, 2, 3, and 4
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -180,8 +180,10 @@ elif menu == "📊 Box Plots & Categorical Analysis":
     cat_col = st.selectbox("Choose a categorical variable:", categorical_columns)
     num_col = st.selectbox("Choose a numerical variable:", numerical_columns)
 
-    # Box Plot
+    # Improved Box Plot
     st.write(f"#### Box Plot: {cat_col} vs. {num_col}")
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(12, 6))  # Adjust figure size for better readability
     sns.boxplot(x=cat_col, y=num_col, data=df, ax=ax, palette="coolwarm")
+    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, ha="right")  # Rotate x-axis labels
+    plt.tight_layout()  # Adjust layout to fit labels
     st.pyplot(fig)
