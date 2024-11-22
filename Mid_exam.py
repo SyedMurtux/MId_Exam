@@ -1,4 +1,4 @@
-# Streamlit-based Python script for advanced automobile data analysis
+# Streamlit-based Python script for the ultimate automobile data analysis dashboard
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,47 +8,57 @@ from scipy import stats
 
 # Page Configuration
 st.set_page_config(
-    page_title="🚗 Automobile Insights Dashboard",
-    page_icon="🌟",
+    page_title="🚗 Auto Insights | The Ultimate Dashboard",
+    page_icon="✨",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS Styling for Premium Look
+# Custom CSS Styling
 st.markdown(
     """
     <style>
+    /* General App Styling */
     .stApp {
-        background-color: #f5f7fa;
+        background-color: #fdfdfd;
         font-family: 'Helvetica Neue', sans-serif;
     }
+
+    /* Main Header */
     .main-header {
-        font-size: 55px;
+        font-size: 60px;
         font-weight: bold;
         text-align: center;
         color: #2c3e50;
-        margin-bottom: 40px;
+        margin-bottom: 30px;
     }
+
+    /* Section Header */
     .section-header {
         font-size: 36px;
         font-weight: bold;
-        color: #34495e;
-        margin-top: 30px;
-        margin-bottom: 20px;
         text-align: center;
+        color: #34495e;
+        margin-top: 40px;
+        margin-bottom: 20px;
     }
+
+    /* Highlights */
     .highlight {
-        background-color: #ecf0f1;
+        background-color: #e8f6ff;
         padding: 20px;
-        border-radius: 8px;
-        border-left: 6px solid #2980b9;
-        color: #2c3e50;
+        border-radius: 10px;
+        border-left: 6px solid #3498db;
         margin-bottom: 20px;
         font-size: 18px;
+        color: #2c3e50;
     }
+
+    /* Footer */
     .footer {
-        font-size: 14px;
         text-align: center;
+        font-size: 16px;
+        font-weight: bold;
         color: #7f8c8d;
         margin-top: 50px;
     }
@@ -57,9 +67,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Header
-st.markdown('<div class="main-header">🚗 Automobile Insights Dashboard</div>', unsafe_allow_html=True)
-st.markdown("### Dive into a world of interactive data analysis with stunning visuals and actionable insights! 🌟")
+# App Header
+st.markdown('<div class="main-header">🚗 Auto Insights | The Ultimate Dashboard</div>', unsafe_allow_html=True)
+st.markdown("#### Bringing automotive data analysis to life with elegance and precision. 🌟")
 
 # Load Data
 @st.cache_data
@@ -70,14 +80,14 @@ def load_data():
 df = load_data()
 
 # Sidebar Navigation
-st.sidebar.title("📂 Explore Sections")
+st.sidebar.title("🔍 Explore Sections")
 menu = st.sidebar.radio(
     "Navigate to:",
     [
         "🏠 Overview",
         "📈 Regression Insights",
-        "📊 Distribution & Box Plots",
-        "🎨 Heatmaps",
+        "📊 Box Plot Analysis",
+        "🎨 Interactive Heatmaps",
         "🔑 Key Findings",
     ],
 )
@@ -89,16 +99,16 @@ if menu == "🏠 Overview":
     col1, col2 = st.columns([2, 1])
     with col1:
         st.markdown(
-            '<div class="highlight">This dataset contains detailed attributes of cars, including their specifications and prices, allowing for in-depth analysis.</div>',
+            '<div class="highlight">This dataset provides a detailed overview of car features and prices, enabling actionable insights.</div>',
             unsafe_allow_html=True,
         )
         st.dataframe(df.head(), use_container_width=True)
     with col2:
-        st.write("### Dataset Info:")
+        st.write("### Dataset Summary")
         st.write(df.describe(include='all').T)
 
     st.markdown(
-        '<div class="highlight">The dataset combines **categorical** and **numerical** data, perfect for exploring relationships between car specifications and price.</div>',
+        '<div class="highlight">Features include **numerical** variables like engine size and price, alongside **categorical** variables such as body style and drive wheels.</div>',
         unsafe_allow_html=True,
     )
 
@@ -107,7 +117,7 @@ elif menu == "📈 Regression Insights":
     st.markdown('<h2 class="section-header">📈 Regression Insights</h2>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="highlight">Understand linear relationships between car attributes and price through scatter plots with regression lines.</div>',
+        '<div class="highlight">Explore linear relationships between car attributes and price using regression plots.</div>',
         unsafe_allow_html=True,
     )
 
@@ -115,7 +125,7 @@ elif menu == "📈 Regression Insights":
     with col1:
         st.write("#### Engine Size vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="engine-size", y="price", data=df, ax=ax, color="#3498db")
+        sns.regplot(x="engine-size", y="price", data=df, ax=ax, color="#2980b9")
         st.pyplot(fig)
 
     with col2:
@@ -128,48 +138,48 @@ elif menu == "📈 Regression Insights":
     with col3:
         st.write("#### Peak RPM vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="peak-rpm", y="price", data=df, ax=ax, color="#2ecc71")
+        sns.regplot(x="peak-rpm", y="price", data=df, ax=ax, color="#27ae60")
         st.pyplot(fig)
 
     with col4:
         st.write("#### Stroke vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="stroke", y="price", data=df, ax=ax, color="#9b59b6")
+        sns.regplot(x="stroke", y="price", data=df, ax=ax, color="#8e44ad")
         st.pyplot(fig)
 
-# Section 3: Distribution & Box Plots
-elif menu == "📊 Distribution & Box Plots":
-    st.markdown('<h2 class="section-header">📊 Distribution & Box Plots</h2>', unsafe_allow_html=True)
+# Section 3: Box Plot Analysis
+elif menu == "📊 Box Plot Analysis":
+    st.markdown('<h2 class="section-header">📊 Box Plot Analysis</h2>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="highlight">Explore how car prices vary across categorical features like body style, engine location, and drive wheels.</div>',
+        '<div class="highlight">Analyze price distributions across categorical features such as body style, engine location, and drive wheels.</div>',
         unsafe_allow_html=True,
     )
 
     col1, col2 = st.columns(2)
     with col1:
-        st.write("#### Price Distribution by Body Style")
+        st.write("#### Price by Body Style")
         fig, ax = plt.subplots()
         sns.boxplot(x="body-style", y="price", data=df, ax=ax, palette="coolwarm")
         st.pyplot(fig)
 
     with col2:
-        st.write("#### Price Distribution by Engine Location")
+        st.write("#### Price by Engine Location")
         fig, ax = plt.subplots()
         sns.boxplot(x="engine-location", y="price", data=df, ax=ax, palette="Set3")
         st.pyplot(fig)
 
-    st.write("#### Price Distribution by Drive Wheels")
+    st.write("#### Price by Drive Wheels")
     fig, ax = plt.subplots()
     sns.boxplot(x="drive-wheels", y="price", data=df, ax=ax, palette="Set2")
     st.pyplot(fig)
 
 # Section 4: Heatmaps
-elif menu == "🎨 Heatmaps":
-    st.markdown('<h2 class="section-header">🎨 Heatmap Analysis</h2>', unsafe_allow_html=True)
+elif menu == "🎨 Interactive Heatmaps":
+    st.markdown('<h2 class="section-header">🎨 Interactive Heatmaps</h2>', unsafe_allow_html=True)
 
     st.markdown(
-        '<div class="highlight">Visualize the relationship between price and categorical attributes using interactive heatmaps.</div>',
+        '<div class="highlight">Visualize price variations across categorical features using heatmaps.</div>',
         unsafe_allow_html=True,
     )
 
@@ -182,7 +192,7 @@ elif menu == "🎨 Heatmaps":
     sns.heatmap(grouped_pivot, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
     st.pyplot(fig)
 
-    st.write("#### Drive-Wheels vs. Price Heatmap")
+    st.write("#### Drive-Wheels vs. Price")
     grouped_drive = df[['drive-wheels', 'price']].groupby('drive-wheels', as_index=False).mean()
 
     fig, ax = plt.subplots()
@@ -204,16 +214,12 @@ elif menu == "🔑 Key Findings":
         """
         ### Key Insights:
         - **Engine Size**, **Horsepower**, and **Curb Weight** have a strong positive correlation with price.
-        - **Highway MPG** and **City MPG** negatively impact price, suggesting efficiency-focused cars are less expensive.
-        - **Drive Wheels** and **Body Style** play a significant role in price variation.
+        - **Highway MPG** and **City MPG** negatively impact price.
+        - Categorical variables like **Drive Wheels** and **Body Style** significantly affect price distribution.
         
-        ### Final Thoughts:
-        This dashboard provides a comprehensive overview of car price determinants. Leverage these insights for predictive modeling or market strategy!
-        """,
-        unsafe_allow_html=True,
+        ### Conclusion:
+        This dashboard provides a comprehensive analysis of key factors influencing car prices. Use these insights to drive business decisions or predictive modeling efforts.
+        """
     )
 
-    st.markdown(
-        '<div class="footer">Thank you for exploring this dashboard! 🚗</div>',
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="footer">Thank you for exploring! 🚗 Let’s drive data forward. 🌟</div>', unsafe_allow_html=True)
