@@ -1,4 +1,4 @@
-# Streamlit: Combined Code for Phases 1, 2, 3, and 4
+# Streamlit: Combined Code for Phases 1, 2, 3, and 4 with Box Plots
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -13,43 +13,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# Custom CSS for Styling
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #f7f9fc;
-        font-family: 'Arial', sans-serif;
-    }
-    .main-header {
-        text-align: center;
-        font-size: 50px;
-        font-weight: bold;
-        color: #34495e;
-        margin-bottom: 20px;
-    }
-    .sub-header {
-        text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        color: #2c3e50;
-    }
-    .highlight {
-        background-color: #e8f6ff;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 6px solid #3498db;
-        color: #2c3e50;
-        margin-bottom: 15px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
-
-# Header
-st.markdown('<div class="main-header">🚗 Automobile Data Dashboard</div>', unsafe_allow_html=True)
-
 # Load Dataset
 @st.cache_data
 def load_data():
@@ -63,31 +26,10 @@ def load_user_data(uploaded_file):
     else:
         return load_data()
 
-# Sidebar for Dataset Selection and Theme Toggle
+# Sidebar for Dataset Selection
 st.sidebar.title("🔍 Explore Options")
 uploaded_file = st.sidebar.file_uploader("Upload your dataset (CSV):", type="csv")
 df = load_user_data(uploaded_file)
-
-# Sidebar: Dark/Light Mode
-theme_mode = st.sidebar.radio("Theme Mode:", ["🌞 Light Mode", "🌙 Dark Mode"])
-if theme_mode == "🌙 Dark Mode":
-    st.markdown(
-        """
-        <style>
-        .stApp {
-            background-color: #2c3e50;
-            color: #ecf0f1;
-        }
-        .main-header {
-            color: #ecf0f1;
-        }
-        .sub-header {
-            color: #ecf0f1;
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 # Navigation Menu
 menu = st.sidebar.radio(
@@ -99,6 +41,7 @@ menu = st.sidebar.radio(
         "📊 Filtered Data",
         "📈 3D Scatter Plot",
         "📋 Correlation Matrix & Insights",
+        "📊 Box Plots & Categorical Analysis",
     ],
 )
 
@@ -224,3 +167,21 @@ elif menu == "📋 Correlation Matrix & Insights":
         f"The strongest correlation is between `{highest_corr[0]}` and `{highest_corr[1]}` "
         f"with a correlation coefficient of **{correlation_matrix.loc[highest_corr[0], highest_corr[1]]:.2f}**."
     )
+
+# Section 7: Box Plots & Categorical Analysis
+elif menu == "📊 Box Plots & Categorical Analysis":
+    st.header("📊 Box Plots & Categorical Analysis")
+
+    st.markdown("### Analyze Categorical Variables with Box Plots")
+    categorical_columns = df.select_dtypes(include=['object']).columns
+    numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
+
+    # Select categorical and numerical columns
+    cat_col = st.selectbox("Choose a categorical variable:", categorical_columns)
+    num_col = st.selectbox("Choose a numerical variable:", numerical_columns)
+
+    # Box Plot
+    st.write(f"#### Box Plot: {cat_col} vs. {num_col}")
+    fig, ax = plt.subplots()
+    sns.boxplot(x=cat_col, y=num_col, data=df, ax=ax, palette="coolwarm")
+    st.pyplot(fig)
