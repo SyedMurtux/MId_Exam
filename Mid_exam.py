@@ -79,4 +79,47 @@ elif menu == "📉 Box Plots":
     sns.boxplot(x="engine-location", y="price", data=df, ax=ax, palette="Set3")
     st.pyplot(fig)
 
-    st.write("#### 3. Price Distrib
+    st.write("#### 3. Price Distribution by Drive Wheels")
+    fig, ax = plt.subplots()
+    sns.boxplot(x="drive-wheels", y="price", data=df, ax=ax, palette="coolwarm")
+    st.pyplot(fig)
+
+# Section 4: Heat Maps
+elif menu == "🎨 Heat Maps":
+    st.title("🎨 Heat Maps")
+    st.write("#### 1. Drive-Wheels and Body-Style vs. Price Heatmap")
+    df_gptest = df[['drive-wheels', 'body-style', 'price']]
+    grouped_test1 = df_gptest.groupby(['drive-wheels', 'body-style'], as_index=False).mean()
+    grouped_pivot = grouped_test1.pivot(index='drive-wheels', columns='body-style', values='price').fillna(0)
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    sns.heatmap(grouped_pivot, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
+    st.pyplot(fig)
+
+    st.write("#### 2. Drive-Wheels vs. Price Heatmap")
+    grouped_drive = df[['drive-wheels', 'price']].groupby('drive-wheels', as_index=False).mean()
+
+    fig, ax = plt.subplots()
+    sns.heatmap(
+        grouped_drive.set_index('drive-wheels').T,
+        annot=True,
+        fmt=".2f",
+        cmap="RdBu",
+        cbar=True,
+        ax=ax,
+    )
+    st.pyplot(fig)
+
+# Section 5: Conclusion
+elif menu == "📋 Conclusion":
+    st.title("📋 Conclusion")
+    st.markdown(
+        """
+        **Key Takeaways:**
+        - Engine size, horsepower, and curb weight show strong positive correlations with price.
+        - Highway-mpg and city-mpg have negative correlations with price.
+        - Drive-wheels and body-style play important roles in price categorization.
+        
+        This analysis highlights the key variables that influence car prices and provides insights for predictive modeling.
+        """
+    )
