@@ -64,15 +64,19 @@ elif menu == "📊 Statistical Insights":
     numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
     selected_feature = st.selectbox("Choose a numerical feature:", numerical_columns)
 
+    # Handle NaN values gracefully
+    if df[selected_feature].isnull().sum() > 0:
+        st.warning(f"The selected feature '{selected_feature}' contains missing values. These will be ignored in calculations.")
+
     # Basic Statistics
     st.write(f"#### Basic Statistics for {selected_feature}")
-    stats = df[selected_feature].describe()
+    stats = df[selected_feature].dropna().describe()
     st.write(stats)
 
     # Distribution Plot
     st.write(f"#### Distribution of {selected_feature}")
     fig, ax = plt.subplots()
-    sns.histplot(df[selected_feature], kde=True, ax=ax, color="#2ecc71")
+    sns.histplot(df[selected_feature].dropna(), kde=True, ax=ax, color="#2ecc71")
     st.pyplot(fig)
 
 # Section 3: Scatter Plots & Regression
@@ -80,19 +84,23 @@ elif menu == "📈 Scatter Plots & Regression":
     st.header("📈 Scatter Plots & Regression")
 
     st.markdown("### Select Features for Regression Analysis")
+    numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
     x_axis = st.selectbox("Choose the X-axis (numerical):", numerical_columns)
     y_axis = st.selectbox("Choose the Y-axis (numerical):", numerical_columns)
+
+    # Drop NaN values for selected columns
+    scatter_data = df[[x_axis, y_axis]].dropna()
 
     # Scatter Plot
     st.write(f"#### Scatter Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax, color="#3498db")
+    sns.scatterplot(x=x_axis, y=y_axis, data=scatter_data, ax=ax, color="#3498db")
     st.pyplot(fig)
 
     # Regression Plot
     st.write(f"#### Regression Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.regplot(x=x_axis, y=y_axis, data=df, ax=ax, color="#e74c3c")
+    sns.regplot(x=x_axis, y=y_axis, data=scatter_data, ax=ax, color="#e74c3c")
     st.pyplot(fig)
 
 # Section 4: Correlation Matrix
@@ -100,7 +108,10 @@ elif menu == "📋 Correlation Matrix":
     st.header("📋 Correlation Matrix")
 
     st.write("### Correlation Matrix for Numerical Variables")
-    correlation_matrix = df[numerical_columns].corr()
+    numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
+    correlation_data = df[numerical_columns].dropna()
+
+    correlation_matrix = correlation_data.corr()
 
     # Heatmap
     fig, ax = plt.subplots(figsize=(10, 8))
