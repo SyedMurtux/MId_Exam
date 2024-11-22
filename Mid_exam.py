@@ -1,4 +1,4 @@
-# Streamlit-based Python script for analyzing automobile data
+# Streamlit-based Python script for advanced automobile data analysis
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -8,8 +8,8 @@ from scipy import stats
 
 # Page Configuration
 st.set_page_config(
-    page_title="🚗 Automobile Data Analysis",
-    page_icon="🚘",
+    page_title="🚗 The Ultimate Automobile Data Analysis",
+    page_icon="🔥",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -19,46 +19,49 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-color: #f7f7f7;
+        background-color: #f7f8fa;
         font-family: 'Arial', sans-serif;
     }
     .main-header {
-        font-size: 50px;
+        font-size: 60px;
         font-weight: bold;
-        color: #444444;
         text-align: center;
+        color: #2c3e50;
         margin-bottom: 30px;
     }
     .sub-header {
         font-size: 30px;
         font-weight: bold;
-        color: #333333;
+        color: #34495e;
         margin-top: 20px;
+        margin-bottom: 10px;
     }
     .highlight {
-        background-color: #fff4e6;
-        padding: 15px;
+        background-color: #ecf0f1;
+        padding: 20px;
         border-radius: 10px;
-        border: 1px solid #ffa500;
-        font-weight: bold;
-        color: #444444;
+        margin-bottom: 20px;
+        border-left: 6px solid #2980b9;
+        font-size: 18px;
+        color: #2c3e50;
     }
     .custom-footer {
         text-align: center;
         font-size: 14px;
-        color: #888888;
+        color: #7f8c8d;
         margin-top: 50px;
+        font-weight: bold;
     }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# App Header
-st.markdown('<div class="main-header">🚗 Automobile Data Analysis</div>', unsafe_allow_html=True)
+# Header
+st.markdown('<div class="main-header">🚗 The Ultimate Automobile Data Analysis</div>', unsafe_allow_html=True)
 
 st.markdown(
-    "Welcome to the interactive automobile data analysis tool! 🎨 Explore fascinating insights into car prices, analyze patterns, and understand key factors that influence the automobile market."
+    "### Explore, Visualize, and Analyze car prices like never before. 🚘"
 )
 
 # Load Data
@@ -70,21 +73,26 @@ def load_data():
 df = load_data()
 
 # Sidebar Navigation
-st.sidebar.title("📂 Navigation")
+st.sidebar.title("📂 Explore Sections")
 menu = st.sidebar.radio(
-    "Choose a Section",
+    "Select a section:",
     [
         "🏠 Overview",
-        "📈 Regression Plots",
-        "📊 Box Plots",
-        "🎨 Heat Maps",
-        "📋 Conclusions",
+        "📈 Regression Insights",
+        "📊 Box Plot Analysis",
+        "🎨 Heatmap Visualizations",
+        "🔑 Key Findings",
     ],
 )
 
 # Section 1: Overview
 if menu == "🏠 Overview":
     st.markdown('<h2 class="sub-header">🏠 Dataset Overview</h2>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<div class="highlight">This dataset contains details about cars, including their specifications and prices. Let’s dive in!</div>',
+        unsafe_allow_html=True,
+    )
 
     st.write("### Dataset Preview:")
     st.dataframe(df.head(), use_container_width=True)
@@ -93,45 +101,51 @@ if menu == "🏠 Overview":
     st.write(df.dtypes)
 
     st.markdown(
-        '<div class="highlight">This dataset contains numerical and categorical variables to explore, analyze, and visualize key factors affecting car prices.</div>',
+        '<div class="highlight">The dataset includes both **categorical** and **numerical** variables, perfect for exploring relationships and drawing meaningful insights.</div>',
         unsafe_allow_html=True,
     )
 
-# Section 2: Regression Plots
-elif menu == "📈 Regression Plots":
-    st.markdown('<h2 class="sub-header">📈 Regression Analysis</h2>', unsafe_allow_html=True)
-    st.write("Explore relationships between various variables and car prices with linear regression.")
+# Section 2: Regression Insights
+elif menu == "📈 Regression Insights":
+    st.markdown('<h2 class="sub-header">📈 Regression Insights</h2>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="highlight">Uncover how various features relate to car prices using scatter plots with regression lines.</div>',
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
     with col1:
         st.write("#### Engine Size vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="engine-size", y="price", data=df, ax=ax, color="#1f77b4")
+        sns.regplot(x="engine-size", y="price", data=df, ax=ax, color="#3498db")
         st.pyplot(fig)
 
     with col2:
         st.write("#### Highway MPG vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="highway-mpg", y="price", data=df, ax=ax, color="#ff7f0e")
+        sns.regplot(x="highway-mpg", y="price", data=df, ax=ax, color="#e74c3c")
         st.pyplot(fig)
 
     col3, col4 = st.columns(2)
     with col3:
         st.write("#### Peak RPM vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="peak-rpm", y="price", data=df, ax=ax, color="#2ca02c")
+        sns.regplot(x="peak-rpm", y="price", data=df, ax=ax, color="#2ecc71")
         st.pyplot(fig)
 
     with col4:
         st.write("#### Stroke vs. Price")
         fig, ax = plt.subplots()
-        sns.regplot(x="stroke", y="price", data=df, ax=ax, color="#d62728")
+        sns.regplot(x="stroke", y="price", data=df, ax=ax, color="#9b59b6")
         st.pyplot(fig)
 
-# Section 3: Box Plots
-elif menu == "📊 Box Plots":
+# Section 3: Box Plot Analysis
+elif menu == "📊 Box Plot Analysis":
     st.markdown('<h2 class="sub-header">📊 Box Plot Analysis</h2>', unsafe_allow_html=True)
-    st.write("Analyze the distribution of car prices across categorical variables.")
+    st.markdown(
+        '<div class="highlight">Discover how car prices vary across different categorical features using box plots.</div>',
+        unsafe_allow_html=True,
+    )
 
     col1, col2 = st.columns(2)
     with col1:
@@ -151,9 +165,13 @@ elif menu == "📊 Box Plots":
     sns.boxplot(x="drive-wheels", y="price", data=df, ax=ax, palette="Set2")
     st.pyplot(fig)
 
-# Section 4: Heat Maps
-elif menu == "🎨 Heat Maps":
-    st.markdown('<h2 class="sub-header">🎨 Heat Map Analysis</h2>', unsafe_allow_html=True)
+# Section 4: Heatmap Visualizations
+elif menu == "🎨 Heatmap Visualizations":
+    st.markdown('<h2 class="sub-header">🎨 Heatmap Visualizations</h2>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="highlight">Explore how price is influenced by multiple factors using heatmaps.</div>',
+        unsafe_allow_html=True,
+    )
 
     st.write("#### Heatmap: Drive-Wheels and Body-Style vs. Price")
     df_gptest = df[['drive-wheels', 'body-style', 'price']]
@@ -178,23 +196,22 @@ elif menu == "🎨 Heat Maps":
     )
     st.pyplot(fig)
 
-# Section 5: Conclusion
-elif menu == "📋 Conclusions":
-    st.markdown('<h2 class="sub-header">📋 Conclusions</h2>', unsafe_allow_html=True)
-
+# Section 5: Key Findings
+elif menu == "🔑 Key Findings":
+    st.markdown('<h2 class="sub-header">🔑 Key Findings</h2>', unsafe_allow_html=True)
     st.markdown(
         """
         ### Key Takeaways:
-        - Continuous variables such as `engine-size`, `horsepower`, and `curb-weight` have a strong positive correlation with price.
-        - Negative correlations exist for `highway-mpg` and `city-mpg` with price.
-        - Categorical variables like `drive-wheels` and `body-style` significantly influence price categories.
+        - **Engine Size**, **Horsepower**, and **Curb Weight** strongly correlate with car prices.
+        - Features like **Highway MPG** and **City MPG** have a negative relationship with price.
+        - Categorical variables like **Drive Wheels** and **Body Style** significantly influence price.
         
-        ### Final Thoughts:
-        This interactive tool highlights the key factors that impact car prices, providing valuable insights for data analysis and predictive modeling.
+        ### Insights for Action:
+        Use these findings to build predictive models or make strategic decisions in the automobile market!
         """
     )
 
     st.markdown(
-        '<div class="custom-footer">Thank you for exploring! 🚗✨</div>',
+        '<div class="custom-footer">🚗 Thank you for exploring! Dive deeper into your automobile analysis journey. 🚀</div>',
         unsafe_allow_html=True,
     )
