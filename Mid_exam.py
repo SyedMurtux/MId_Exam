@@ -1,4 +1,4 @@
-# Streamlit: Combined Code for Phases 1, 2, and 3
+# Streamlit: Combined Code for Phases 1, 2, 3, and 4
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -13,6 +13,43 @@ st.set_page_config(
     layout="wide",
 )
 
+# Custom CSS for Styling
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-color: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+    }
+    .main-header {
+        text-align: center;
+        font-size: 50px;
+        font-weight: bold;
+        color: #34495e;
+        margin-bottom: 20px;
+    }
+    .sub-header {
+        text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .highlight {
+        background-color: #e8f6ff;
+        padding: 15px;
+        border-radius: 8px;
+        border-left: 6px solid #3498db;
+        color: #2c3e50;
+        margin-bottom: 15px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+# Header
+st.markdown('<div class="main-header">🚗 Automobile Data Dashboard</div>', unsafe_allow_html=True)
+
 # Load Dataset
 @st.cache_data
 def load_data():
@@ -26,11 +63,33 @@ def load_user_data(uploaded_file):
     else:
         return load_data()
 
-# Sidebar for Dataset Selection
+# Sidebar for Dataset Selection and Theme Toggle
 st.sidebar.title("🔍 Explore Options")
 uploaded_file = st.sidebar.file_uploader("Upload your dataset (CSV):", type="csv")
 df = load_user_data(uploaded_file)
 
+# Sidebar: Dark/Light Mode
+theme_mode = st.sidebar.radio("Theme Mode:", ["🌞 Light Mode", "🌙 Dark Mode"])
+if theme_mode == "🌙 Dark Mode":
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background-color: #2c3e50;
+            color: #ecf0f1;
+        }
+        .main-header {
+            color: #ecf0f1;
+        }
+        .sub-header {
+            color: #ecf0f1;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+# Navigation Menu
 menu = st.sidebar.radio(
     "Navigate to:",
     [
@@ -45,19 +104,15 @@ menu = st.sidebar.radio(
 
 # Section 1: Overview
 if menu == "🏠 Overview":
-    st.title("🚗 Automobile Data Analysis for Education")
+    st.title("🏠 Overview")
     st.markdown(
         """
-        ### Explore automobile data with enhanced visuals and insights!
-        - Use preloaded or custom datasets.
-        - Analyze relationships between features.
-        - Discover trends and correlations in car features and prices.
+        ### Welcome to the Automobile Data Dashboard!
+        - Explore dynamic insights and correlations in automobile datasets.
+        - Use our preloaded dataset or upload your own for a custom experience.
         """
     )
-
-    st.header("📂 Dataset Preview")
     st.dataframe(df.head(), use_container_width=True)
-
     st.write("### Dataset Summary")
     st.write(df.describe(include='all').T)
 
@@ -93,25 +148,16 @@ elif menu == "📈 Scatter & Regression":
     x_axis = st.selectbox("Choose the X-axis (numerical):", numerical_columns)
     y_axis = st.selectbox("Choose the Y-axis (numerical):", numerical_columns)
 
-    # Filter Data
-    st.markdown("### Apply Filters")
-    min_val, max_val = st.slider(
-        f"Filter data by {x_axis}:",
-        float(df[x_axis].min()), float(df[x_axis].max()),
-        (float(df[x_axis].min()), float(df[x_axis].max())),
-    )
-    filtered_data = df[(df[x_axis] >= min_val) & (df[x_axis] <= max_val)]
-
     # Scatter Plot
     st.write(f"#### Scatter Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.scatterplot(x=x_axis, y=y_axis, data=filtered_data, ax=ax, color="#3498db")
+    sns.scatterplot(x=x_axis, y=y_axis, data=df, ax=ax, color="#3498db")
     st.pyplot(fig)
 
     # Regression Plot
     st.write(f"#### Regression Plot: {x_axis} vs. {y_axis}")
     fig, ax = plt.subplots()
-    sns.regplot(x=x_axis, y=y_axis, data=filtered_data, ax=ax, color="#e74c3c")
+    sns.regplot(x=x_axis, y=y_axis, data=df, ax=ax, color="#e74c3c")
     st.pyplot(fig)
 
 # Section 4: Filtered Data
@@ -120,17 +166,6 @@ elif menu == "📊 Filtered Data":
 
     st.markdown("### Apply Filters to Narrow Down Data")
     numerical_columns = df.select_dtypes(include=['float64', 'int64']).columns
-
-    # Slider for Price Range
-    if 'price' in df.columns:
-        min_price, max_price = st.slider(
-            "Select Price Range:",
-            int(df['price'].min()), int(df['price'].max()),
-            (int(df['price'].min()), int(df['price'].max())),
-        )
-        filtered_df = df[(df['price'] >= min_price) & (df['price'] <= max_price)]
-        st.write(f"#### Cars in the price range: ${min_price:,} - ${max_price:,}")
-        st.dataframe(filtered_df)
 
     # Filter for Numerical Columns
     selected_column = st.selectbox("Select a numerical feature to filter:", numerical_columns)
@@ -189,11 +224,3 @@ elif menu == "📋 Correlation Matrix & Insights":
         f"The strongest correlation is between `{highest_corr[0]}` and `{highest_corr[1]}` "
         f"with a correlation coefficient of **{correlation_matrix.loc[highest_corr[0], highest_corr[1]]:.2f}**."
     )
-
-    # Price and Engine-Size Insight (Example)
-    if "price" in correlation_matrix.columns and "engine-size" in correlation_matrix.columns:
-        st.write(
-            f"#### Price vs. Engine Size Insight:\n"
-            f"Correlation coefficient: **{correlation_matrix.loc['price', 'engine-size']:.2f}**.\n"
-            f"Interpretation: Larger engines are strongly associated with higher prices."
-        )
